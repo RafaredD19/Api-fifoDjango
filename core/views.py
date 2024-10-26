@@ -31,6 +31,7 @@ def process_next_ticket_view(request):
         message = "No hay tickets en la cola para procesar."
     return redirect(f"/tickets/view/?message={message}")
 
+
 def search_ticket_view(request):
     query = request.GET.get('query')
     search_by = request.GET.get('search_by', 'id')
@@ -64,3 +65,7 @@ def search_ticket_view(request):
             tickets = ticket_manager.get_all_tickets_sorted_by_priority()  # Orden predeterminada
 
     return render(request, 'view_tickets.html', {'tickets': tickets, 'message': message})
+
+
+def home_view(request):
+    return render(request, 'home.html')
