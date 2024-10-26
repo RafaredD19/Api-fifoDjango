@@ -13,15 +13,15 @@ class TicketManager:
         return ticket
 
     def get_next_ticket(self):
-        # Obtener el siguiente ticket en orden FIFO y eliminarlo
-        next_ticket = Ticket.objects.first()
+        # Obtener el ticket con el timestamp más antiguo (FIFO)
+        next_ticket = Ticket.objects.order_by('timestamp').first()  # Ordenar por timestamp para FIFO
         if next_ticket:
             next_ticket.delete()
             self.save_to_file()  # Guardar estado después de eliminar
         return next_ticket
 
     def get_all_tickets_sorted_by_priority(self):
-        # Obtener todos los tickets ordenados por prioridad ascendente
+        # Obtener todos los tickets ordenados por prioridad en orden ascendente
         return Ticket.objects.order_by('priority')
 
     def save_to_file(self):
