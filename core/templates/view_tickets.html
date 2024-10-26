@@ -128,15 +128,22 @@
             background-color: #b2dfdb;
         }
 
-        /* Mensaje */
+        /* Estilo de alerta */
         .message {
             color: #333;
             text-align: center;
             margin-top: 1rem;
-            font-weight: bold;
-            background-color: #e0f2f1;
-            padding: 0.5rem;
+            padding: 0.75rem;
             border-radius: 6px;
+            font-weight: bold;
+        }
+        .message.success {
+            background-color: #e0f7fa;
+            color: #00796B;
+        }
+        .message.error {
+            background-color: #ffebee;
+            color: #d32f2f;
         }
     </style>
 </head>
@@ -160,15 +167,9 @@
             <button type="submit">Buscar</button>
         </form>
 
-        <!-- Botón para procesar el siguiente ticket -->
-        <form method="POST" action="{% url 'process_next_ticket' %}">
-            {% csrf_token %}
-            <button type="submit" class="process-button">Procesar el siguiente ticket</button>
-        </form>
-
-        <!-- Mensaje que muestra el resultado del procesamiento -->
+        <!-- Mensaje de alerta -->
         {% if message %}
-            <p class="message">{{ message }}</p>
+            <p class="message {% if 'Error' in message %}error{% else %}success{% endif %}">{{ message }}</p>
         {% endif %}
 
         <!-- Tabla de tickets -->

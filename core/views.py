@@ -32,13 +32,35 @@ def process_next_ticket_view(request):
     return redirect(f"/tickets/view/?message={message}")
 
 def search_ticket_view(request):
-    # Buscar un ticket por ID o por nombre del cliente
     query = request.GET.get('query')
     search_by = request.GET.get('search_by', 'id')
+    order_by = request.GET.get('order_by')
 
-    if search_by == 'client_name':
-        tickets = ticket_manager.search_tickets_by_client_name(query)
+    message = None
+    tickets = []
+
+    # Verificar si `query` está presente para hacer una búsqueda
+    if query:
+        if search_by == 'id':
+            if not query.isdigit():  # Verificar que el valor sea un número
+                message = "Error: el ID debe ser un número."
+            else:
+                tickets = [ticket_manager.search_ticket_by_id(int(query))]
+                if not tickets[0]:
+                    message = f"No se encontró un ticket con ID '{query}'."
+        elif search_by == 'client_name':
+            tickets = ticket_manager.search_tickets_by_client_name(query)
+            if not tickets:
+                message = f"No se encontraron tickets con el nombre '{query}'."
+        else:
+            message = "Error: parámetro de búsqueda inválido."
+    # Si no hay `query`, ordenar por `priority` o `timestamp`
     else:
-        tickets = [ticket_manager.search_ticket_by_id(query)]
+        if order_by == 'priority':
+            tickets = ticket_manager.get_all_tickets_sorted_by_priority()
+        elif order_by == 'timestamp':
+            tickets = ticket_manager.get_all_tickets_sorted_by_timestamp()
+        else:
+            tickets = ticket_manager.get_all_tickets_sorted_by_priority()  # Orden predeterminada
 
-    return render(request, 'view_tickets.html', {'tickets': tickets, 'message': f"Resultados de búsqueda para '{query}'"})
+    return render(request, 'view_tickets.html', {'tickets': tickets, 'message': message})
