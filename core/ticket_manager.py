@@ -24,6 +24,21 @@ class TicketManager:
         # Obtener todos los tickets ordenados por prioridad en orden ascendente
         return Ticket.objects.order_by('priority')
 
+    def get_all_tickets_sorted_by_timestamp(self):
+        # Obtener todos los tickets ordenados por fecha/hora en orden ascendente
+        return Ticket.objects.order_by('timestamp')
+
+    def search_ticket_by_id(self, ticket_id):
+        # Buscar un ticket por su ID
+        try:
+            return Ticket.objects.get(id=ticket_id)
+        except Ticket.DoesNotExist:
+            return None
+
+    def search_tickets_by_client_name(self, client_name):
+        # Buscar tickets por el nombre del cliente
+        return Ticket.objects.filter(client_name__icontains=client_name)
+
     def save_to_file(self):
         # Guardar todos los tickets en un archivo JSON
         tickets = Ticket.objects.all().values('id', 'client_name', 'priority', 'timestamp')

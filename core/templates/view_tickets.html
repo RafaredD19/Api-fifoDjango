@@ -6,27 +6,78 @@
     <title>Lista de Tickets</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Estilos generales */
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background: linear-gradient(135deg, #4CAF50, #009688);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            color: #333;
         }
         .container {
             background: #fff;
             padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 600px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
             width: 100%;
         }
         h1 {
-            color: #333;
+            color: #4CAF50;
+            font-size: 1.8rem;
             text-align: center;
+            margin-bottom: 1rem;
         }
+        .order-links, .search-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .order-links a {
+            color: #009688;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .order-links a:hover {
+            color: #00796B;
+        }
+
+        /* Estilos del formulario de búsqueda */
+        .search-container input[type="text"] {
+            padding: 0.4rem;
+            width: 180px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+        }
+        .search-container select {
+            padding: 0.4rem;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            outline: none;
+        }
+        .search-container button {
+            background: #4CAF50;
+            color: #fff;
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .search-container button:hover {
+            background: #388E3C;
+        }
+
+        /* Estilos de la tabla */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -38,36 +89,54 @@
             border-bottom: 1px solid #ddd;
         }
         th {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #009688;
+            color: #fff;
+            font-weight: bold;
         }
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
-        .link, .process-button {
+        tr:hover {
+            background-color: #e0f7fa;
+        }
+
+        /* Botones y enlaces */
+        .process-button, .link {
             display: block;
-            margin-top: 1rem;
+            margin: 1.5rem auto;
+            padding: 0.7rem 1.5rem;
             text-align: center;
-            color: #4CAF50;
+            font-size: 1rem;
+            border-radius: 8px;
             text-decoration: none;
+            transition: background 0.3s ease;
         }
         .process-button {
-            padding: 0.5rem 1rem;
-            background-color: #4CAF50;
+            background-color: #009688;
             color: white;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
-            font-size: 1rem;
         }
         .process-button:hover {
-            background-color: #45a049;
+            background-color: #00796B;
         }
+        .link {
+            color: #009688;
+            background-color: #e0f2f1;
+        }
+        .link:hover {
+            background-color: #b2dfdb;
+        }
+
+        /* Mensaje */
         .message {
             color: #333;
             text-align: center;
             margin-top: 1rem;
             font-weight: bold;
+            background-color: #e0f2f1;
+            padding: 0.5rem;
+            border-radius: 6px;
         }
     </style>
 </head>
@@ -75,6 +144,22 @@
     <div class="container">
         <h1>Lista de Tickets</h1>
         
+        <!-- Ordenar por prioridad o fecha -->
+        <div class="order-links">
+            <a href="?order_by=priority">Ordenar por Prioridad</a> |
+            <a href="?order_by=timestamp">Ordenar por Fecha</a>
+        </div>
+
+        <!-- Formulario de búsqueda -->
+        <form method="GET" action="{% url 'search_ticket' %}" class="search-container">
+            <input type="text" name="query" placeholder="Buscar ticket...">
+            <select name="search_by">
+                <option value="id">Por ID</option>
+                <option value="client_name">Por Nombre del Cliente</option>
+            </select>
+            <button type="submit">Buscar</button>
+        </form>
+
         <!-- Botón para procesar el siguiente ticket -->
         <form method="POST" action="{% url 'process_next_ticket' %}">
             {% csrf_token %}
@@ -86,6 +171,7 @@
             <p class="message">{{ message }}</p>
         {% endif %}
 
+        <!-- Tabla de tickets -->
         <table>
             <thead>
                 <tr>
@@ -110,6 +196,7 @@
                 {% endfor %}
             </tbody>
         </table>
+
         <a class="link" href="{% url 'add_ticket' %}">Añadir Nuevo Ticket</a>
     </div>
 </body>
